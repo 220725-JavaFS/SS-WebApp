@@ -11,12 +11,23 @@
   </welcome-file-list>
   
   <servlet>
-  <servlet-name></servlet-name>
-  <servlet-class>com.revature.controllers</servlet-class>
+  <servlet-name>MonstersController</servlet-name>
+  <servlet-class>com.revature.controllers.MonstersController</servlet-class>
   </servlet>
   
   <servlet-mapping>
-  <servlet-name></servlet-name>
-  <url-pattern>/SS-WebApp/*</url-pattern>
+  <servlet-name>MonstersController</servlet-name>
+  <url-pattern>/monsters/*</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet>
+  <servlet-name>ForRedrController</servlet-name>
+  <servlet-class>com.revature.controllers.ForRedrController</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  <servlet-name>ForRedrController</servlet-name>
+  <url-pattern>/fr</url-pattern>
   </servlet-mapping>
 </web-app>

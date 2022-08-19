@@ -29,9 +29,9 @@ public class ConnectionUtil {
 				e.printStackTrace();
 			}
 			
-			String url = "jdbc:postgresql://blizworojavafs072522.cqefx7g9mnjf.us-east-2.rds.amazonaws.com:5432/demos";
+			String url = "jdbc:postgresql://blizworojavafs072522.cqefx7g9mnjf.us-east-2.rds.amazonaws.com:5432/proj1";
 			String username = "postgres"; //It is possible to hide raw credentials using ENV variables.
-			String password = "JavaPassWord01"; //You can access those variables using System.getenv("var-name");
+			String password = "password"; //You can access those variables using System.getenv("var-name");
 			
 			connection = DriverManager.getConnection(url, username, password);
 			
