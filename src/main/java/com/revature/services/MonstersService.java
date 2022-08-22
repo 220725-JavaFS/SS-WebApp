@@ -24,8 +24,8 @@ private MonstersDAO monstersDAO = new MonstersDAOImpl();
 		monstersDAO.newMonsters(monsters);
 	}
 	
-	public void deleteMonster(int id) {
-		monstersDAO.eraseMonsters(id);
+	public Monsters deleteMonster(int id) {
+		return monstersDAO.eraseMonsters(id);
 		
 	}
 	
@@ -33,5 +33,10 @@ private MonstersDAO monstersDAO = new MonstersDAOImpl();
 		monstersDAO.eraseMonstersByName(name);
 		
 	}
+	
+	public void updateMonster (int id, String columnName, String change) {
+		monstersDAO.getMonstersUpdate(id, columnName, change);
+	}
+
 
 }

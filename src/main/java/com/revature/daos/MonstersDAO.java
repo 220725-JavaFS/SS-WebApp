@@ -12,8 +12,12 @@ public interface MonstersDAO {
 
 	public abstract void newMonsters(Monsters Monsters);
 
-	public abstract void eraseMonsters(int id);
+	public abstract Monsters eraseMonsters(int id);
 
 	public abstract void eraseMonstersByName(Monsters name);
 
+	public abstract Monsters getMonstersUpdate(int id, String columnName, String change);
+
+	Object getMonstersById(Object object, int id);
+	
 }
