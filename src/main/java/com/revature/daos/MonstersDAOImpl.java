@@ -1,37 +1,99 @@
 package com.revature.daos;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.models.Monsters;
 import com.revature.utils.ConnectionUtil;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-
 public class MonstersDAOImpl implements MonstersDAO{
-
+ObjectMapper mapper = new ObjectMapper();
 	
 	@Override
 	public Object getMonstersById(Object object, int id) {
 		try(Connection conn = ConnectionUtil.getConnection()){
+			
+			
 			String sql = "SELECT * FROM Monsters WHERE monsterid = " + id +"; ";
 			Statement statement = conn.createStatement(); 
 			ResultSet result = statement.executeQuery(sql);
+			ResultSetMetaData resmd = result.getMetaData();
+			//List<Monsters> list = new ArrayList();
+			int count = 0;
+			while (result.next()) {
+				Class<?> objectClass = object.getClass();
+		        Field[] fields = objectClass.getDeclaredFields();
+		        int len = resmd.getColumnCount();
+		        count++;
+			System.out.println();
 			
-			Class<?> objectClass = object.getClass();
-	        Field[] fields = objectClass.getDeclaredFields();
 			System.out.println(objectClass);
-			for(Field f:fields) {
-				System.out.println(f.getName());
-			}
+			StringBuilder jsonBuilder = new StringBuilder("{");
+			//String json = mapper.writeValueAsString(result);
 			
+			//if(result.next()) {
+			
+			for(Field f:fields) {
+				String fieldName = f.getName();
+				String getterName = "get" + f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
+				String setterName = "set" + f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
+				System.out.println(f.getName());
+				System.out.println(getterName);
+				System.out.println(setterName);
+				
+				
+				try {
+
+					// obtain the getter method from the class we are mapping
+					Method getterMethod = objectClass.getMethod(getterName);
+					Method setterMethod = objectClass.getMethod(setterName);
+					// invoke that method on the object that we are mapping
+					Object fieldValue = getterMethod.invoke(result);
+					Object fieldSValue = setterMethod.invoke(result, fields);
+					System.out.println(fieldSValue);
+					//System.out.println(sql);
+					//System.out.println(" \"" + fieldName + "\"" + " : \"" + fieldValue + "\",");
+					String jsonKeyValuePair = " \""+fieldName + "\""+" : \"" + fieldValue + "\",";
+					
+					System.out.println(jsonBuilder.append(jsonKeyValuePair));
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			}
+		//}
+
+		// construct a key value pair for each field name and field value
+
+		// combine all of the key value pairs into a result string
+
+		return jsonBuilder.substring(0, jsonBuilder.length()-1) + " }";
+			}
+			}catch (SQLException e) {
+					e.printStackTrace();
+					}
+		
+		return null;
+		}
+	
 //			if(result.next()) {
 //				//results sets are cursor base, each time .next is called the cursor moves to the next group of values. 
 //				//It starts the one before so you will always need to call the next.
@@ -49,12 +111,12 @@ public class MonstersDAOImpl implements MonstersDAO{
 //				
 //			}
 			
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
+//		}catch(SQLException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		return null;
+//	}
 	
 	
 	
@@ -186,14 +248,25 @@ public class MonstersDAOImpl implements MonstersDAO{
 	}
 
 	@Override
-	public Monsters getMonstersUpdate(int id, String columnName, String change) {
+	public Monsters getMonstersUpdate(Monsters monsters, int id) {
 		try(Connection conn = ConnectionUtil.getConnection()){		
-			String sql = "UPDATE Monsters SET "+columnName+" = '"+change+"' WHERE monsterID = "+id+";";
+			String sql = "UPDATE Monsters SET monsterName = ?, "
+					+ "attributeType = ?, attack = ?, defense = ?, "
+					+ "description = ? WHERE monsterID = "+id+";";
 			PreparedStatement prepares = conn.prepareStatement(sql); 
 			
-			System.out.println(columnName);
-			System.out.println(change);
-			System.out.println(id);
+			int count = 0;
+			prepares.setString(++count, monsters.getName());
+			prepares.setString(++count, monsters.getAttributeType());
+			prepares.setInt(++count, monsters.getAttack());
+			prepares.setInt(++count, monsters.getDefense());
+			prepares.setString(++count, monsters.getDescription());
+			
+			prepares.execute();
+			
+//			System.out.println(columnName);
+//			System.out.println(change);
+//			System.out.println(id);
 
 			//String eMail = result.getString("eMail");
 			prepares.execute();

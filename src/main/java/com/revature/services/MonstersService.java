@@ -34,8 +34,8 @@ private MonstersDAO monstersDAO = new MonstersDAOImpl();
 		
 	}
 	
-	public void updateMonster (int id, String columnName, String change) {
-		monstersDAO.getMonstersUpdate(id, columnName, change);
+	public void updateMonster (Monsters monsters, int id) {
+		monstersDAO.getMonstersUpdate(monsters, id);
 	}
 
 

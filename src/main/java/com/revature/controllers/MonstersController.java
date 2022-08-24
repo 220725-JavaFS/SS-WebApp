@@ -175,6 +175,10 @@ public class MonstersController extends HttpServlet{
 		
 		String line = reader.readLine();
 		
+		String URI = request.getRequestURI();
+		
+		String[] urlSections = URI.split("/");
+		
 		while(line!=null) {
 			sb.append(line);
 			line = reader.readLine();
@@ -186,7 +190,9 @@ public class MonstersController extends HttpServlet{
 		
 		Monsters Monsters = objectMapper.readValue(json, Monsters.class);
 		
-		MonstersService.updateMonster(0, json, json);
+		int id = Integer.valueOf(urlSections[3]);
+		
+		MonstersService.updateMonster(Monsters, id);
 		
 		response.setStatus(201);
 		

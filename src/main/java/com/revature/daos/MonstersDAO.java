@@ -16,7 +16,7 @@ public interface MonstersDAO {
 
 	public abstract void eraseMonstersByName(Monsters name);
 
-	public abstract Monsters getMonstersUpdate(int id, String columnName, String change);
+	public abstract Monsters getMonstersUpdate(Monsters monsters, int id);
 
 	Object getMonstersById(Object object, int id);
 	
