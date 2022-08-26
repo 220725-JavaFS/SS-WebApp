@@ -14,109 +14,47 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revature.JSONMapper;
+import com.revature.Mapper;
 import com.revature.models.Monsters;
 import com.revature.utils.ConnectionUtil;
 
 public class MonstersDAOImpl implements MonstersDAO{
-ObjectMapper mapper = new ObjectMapper();
+	static ObjectMapper mapper = new ObjectMapper();
 	
 	@Override
 	public Object getMonstersById(Object object, int id) {
 		try(Connection conn = ConnectionUtil.getConnection()){
-			
-			
+			//Monsters m = Monsters.FindById(id);
 			String sql = "SELECT * FROM Monsters WHERE monsterid = " + id +"; ";
 			Statement statement = conn.createStatement(); 
 			ResultSet result = statement.executeQuery(sql);
-			ResultSetMetaData resmd = result.getMetaData();
+			//ResultSetMetaData resmd = result.getMetaData();
 			//List<Monsters> list = new ArrayList();
-			int count = 0;
-			while (result.next()) {
-				Class<?> objectClass = object.getClass();
-		        Field[] fields = objectClass.getDeclaredFields();
-		        int len = resmd.getColumnCount();
-		        count++;
-			System.out.println();
 			
-			System.out.println(objectClass);
-			StringBuilder jsonBuilder = new StringBuilder("{");
-			//String json = mapper.writeValueAsString(result);
-			
-			//if(result.next()) {
-			
-			for(Field f:fields) {
-				String fieldName = f.getName();
-				String getterName = "get" + f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
-				String setterName = "set" + f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
-				System.out.println(f.getName());
-				System.out.println(getterName);
-				System.out.println(setterName);
+			if(result.next()) {
+				//results sets are cursor base, each time .next is called the cursor moves to the next group of values. 
+				//It starts the one before so you will always need to call the next.
 				
+				Monsters monsters = new Monsters(
+						result.getInt("monsterID"),
+						result.getString("monsterName"),
+						result.getString("attributeType"),
+						result.getInt("attack"),
+						result.getInt("defense"),
+						result.getString("description")
+						);
 				
-				try {
-
-					// obtain the getter method from the class we are mapping
-					Method getterMethod = objectClass.getMethod(getterName);
-					Method setterMethod = objectClass.getMethod(setterName);
-					// invoke that method on the object that we are mapping
-					Object fieldValue = getterMethod.invoke(result);
-					Object fieldSValue = setterMethod.invoke(result, fields);
-					System.out.println(fieldSValue);
-					//System.out.println(sql);
-					//System.out.println(" \"" + fieldName + "\"" + " : \"" + fieldValue + "\",");
-					String jsonKeyValuePair = " \""+fieldName + "\""+" : \"" + fieldValue + "\",";
-					
-					System.out.println(jsonBuilder.append(jsonKeyValuePair));
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				return monsters;
+				
 			}
-			}
-		//}
-
-		// construct a key value pair for each field name and field value
-
-		// combine all of the key value pairs into a result string
-
-		return jsonBuilder.substring(0, jsonBuilder.length()-1) + " }";
-			}
-			}catch (SQLException e) {
-					e.printStackTrace();
-					}
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
 		
 		return null;
-		}
-	
-//			if(result.next()) {
-//				//results sets are cursor base, each time .next is called the cursor moves to the next group of values. 
-//				//It starts the one before so you will always need to call the next.
-//				
-//				Monsters monsters = new Monsters(
-//						result.getInt("monsterID"),
-//						result.getString("monsterName"),
-//						result.getString("attributeType"),
-//						result.getInt("attack"),
-//						result.getInt("defense"),
-//						result.getString("description")
-//						);
-//				
-//				return monsters;
-//				
-//			}
-			
-//		}catch(SQLException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		return null;
-//	}
+	}
 	
 	
 	
@@ -282,12 +220,18 @@ ObjectMapper mapper = new ObjectMapper();
 	
 	public static void main(String[] args) {
 		
-		Monsters monster = new Monsters();
 		MonstersDAO mondao = new MonstersDAOImpl();
+		Monsters monster = new Monsters();
+		monster = mondao.getMonstersById(1);
+		Class<?> c1 = mondao.getClass();
+		Class<Monsters> c2 = Monsters.class;
 		
-		mondao.getMonstersById(monster, 2);
+		//mondao.getMonstersById(1);
 		System.out.println(mondao);
 		
+		Mapper mapper = new JSONMapper();
+		String json = mapper.serialize(monster);
+		System.out.println(json);
 		
 	}
 

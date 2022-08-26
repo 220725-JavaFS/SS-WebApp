@@ -8,13 +8,7 @@ import com.revature.models.Monsters;
 
 public class MonstersServiceTest {
 	
-	private int monster_id;
-	private String name;
-	private String type;
-	private int attack;
-	private int defense;
-	private String description;
-	private static Monsters monsters;
+	
 	
 	@BeforeAll
 	public static void createMonster() {

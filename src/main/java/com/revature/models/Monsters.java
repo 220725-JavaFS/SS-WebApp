@@ -139,6 +139,7 @@ public class Monsters {
 		return "Monsters [monsters_id=" + monsters_id + ", name=" + name + ", attributeType=" + attributeType
 				+ ", attack=" + attack + ", defense=" + defense + ", description=" + description + "]";
 	}
+
 	
 	
 	
