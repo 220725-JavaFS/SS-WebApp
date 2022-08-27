@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,13 +12,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revature.models.Monsters;
-import com.revature.services.MonstersService;
+
+import com.revature.JSONMapperZ;
+
+import com.revature.MapperZ;
+import com.revature.daos.MonsterDAOZ;
+import com.revature.daos.MonstersDAOImplZ;
+import com.revature.models.MonsterZ;
+
+import com.revature.services.MonstersServiceZ;
 
 public class MonstersController extends HttpServlet{
 	
-	private MonstersService MonstersService = new MonstersService();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private MonstersServiceZ MonstersService = new MonstersServiceZ();
 	private ObjectMapper objectMapper = new ObjectMapper();
+	MapperZ mapper = new JSONMapperZ();
+	private MonsterDAOZ mondao = new MonstersDAOImplZ();
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -32,7 +46,7 @@ public class MonstersController extends HttpServlet{
 		
 		if(urlSections.length==3) {
 		
-		List<Monsters> list = MonstersService.fullDeck();
+		List<MonsterZ> list = MonstersService.fullDeck();
 		
 		String json = objectMapper.writeValueAsString(list);
 		System.out.println(json);
@@ -51,15 +65,17 @@ public class MonstersController extends HttpServlet{
 			
 			int id = Integer.valueOf(urlSections[3]);
 			
-			Monsters Monsters = MonstersService.getSingleMonsters(id);
+			MonsterZ Monsters = MonstersService.getSingleMonsters(id);
 			
 			//Monsters Monsters = MonstersService.deleteMonster(id);
 			
 			PrintWriter printWriter = response.getWriter();
 			
-			String json = objectMapper.writeValueAsString(Monsters);
+			//String json = objectMapper.writeValueAsString(Monsters);
+			String json2 = mapper.serialize(Monsters);
 			
-			printWriter.print(json);
+			//printWriter.print(json);
+			printWriter.print(json2);
 			
 			response.setStatus(200);
 			
@@ -99,10 +115,18 @@ public class MonstersController extends HttpServlet{
 		
 		System.out.println(json);
 		
-		Monsters Monsters = objectMapper.readValue(json, Monsters.class);
-		
+		MonsterZ Monsters = objectMapper.readValue(json, MonsterZ.class);
+		//MonsterZ monsters2 = mapper.deSerialize(json, MonsterZ.class);
 		MonstersService.addMonster(Monsters);
+		//MonstersService.addMonster(monsters2);
+		//System.out.println(monsters2);
 		
+		Stream.Builder<String> toBuild = Stream.builder();
+		Stream<String> toPost = toBuild.add(json).build();
+		
+		System.out.println("Here is the information that was posted:");
+		System.out.println("\n");
+		toPost.forEach(System.out::println);
 		response.setStatus(201);
 	}
 	
@@ -119,7 +143,7 @@ public class MonstersController extends HttpServlet{
 		
 		if(urlSections.length==3) {
 		
-		List<Monsters> list = MonstersService.fullDeck();
+		List<MonsterZ> list = MonstersService.fullDeck();
 		
 		String json = objectMapper.writeValueAsString(list);
 		System.out.println(json);
@@ -140,7 +164,7 @@ public class MonstersController extends HttpServlet{
 			
 			//Monsters Monsters = MonstersService.getSingleMonsters(id);
 			
-			Monsters Monsters = MonstersService.deleteMonster(id);
+			MonsterZ Monsters = MonstersService.deleteMonster(id);
 			
 			PrintWriter printWriter = response.getWriter();
 			
@@ -188,11 +212,18 @@ public class MonstersController extends HttpServlet{
 		
 		System.out.println(json);
 		
-		Monsters Monsters = objectMapper.readValue(json, Monsters.class);
+		MonsterZ Monsters = objectMapper.readValue(json, MonsterZ.class);
 		
 		int id = Integer.valueOf(urlSections[3]);
 		
 		MonstersService.updateMonster(Monsters, id);
+		
+		Stream.Builder<String> toBuild = Stream.builder();
+		Stream<String> toPost = toBuild.add(json).build();
+		
+		System.out.println("Here is the information that was updated:");
+		System.out.println("\n");
+		toPost.forEach(System.out::println);
 		
 		response.setStatus(201);
 		
