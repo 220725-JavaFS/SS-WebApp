@@ -30,4 +30,6 @@
   <servlet-name>ForRedrController</servlet-name>
   <url-pattern>/fr</url-pattern>
   </servlet-mapping>
+  
+  
 </web-app>

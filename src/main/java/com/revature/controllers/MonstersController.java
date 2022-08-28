@@ -28,7 +28,7 @@ public class MonstersController extends HttpServlet{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private MonstersServiceZ MonstersService = new MonstersServiceZ();
+	private MonstersServiceZ MonstersService = new MonstersServiceZ(null);
 	private ObjectMapper objectMapper = new ObjectMapper();
 	MapperZ mapper = new JSONMapperZ();
 	private MonsterDAOZ mondao = new MonstersDAOImplZ();
@@ -71,11 +71,11 @@ public class MonstersController extends HttpServlet{
 			
 			PrintWriter printWriter = response.getWriter();
 			
-			//String json = objectMapper.writeValueAsString(Monsters);
-			String json2 = mapper.serialize(Monsters);
+			String json = objectMapper.writeValueAsString(Monsters);
+			//String json2 = mapper.serialize(Monsters);
 			
-			//printWriter.print(json);
-			printWriter.print(json2);
+			printWriter.print(json);
+			//printWriter.print(json2);
 			
 			response.setStatus(200);
 			
@@ -123,10 +123,12 @@ public class MonstersController extends HttpServlet{
 		
 		Stream.Builder<String> toBuild = Stream.builder();
 		Stream<String> toPost = toBuild.add(json).build();
-		
+		System.out.println(toPost);
 		System.out.println("Here is the information that was posted:");
-		System.out.println("\n");
-		toPost.forEach(System.out::println);
+		//toPost.forEach(System.out::println);
+		String json3 = mapper.serialize(Monsters);
+		MonsterZ unJSON = mapper.deSerialize(json3, MonsterZ.class);
+		response.getWriter().write("Here is the information that was posted: "+unJSON);
 		response.setStatus(201);
 	}
 	
@@ -141,27 +143,10 @@ public class MonstersController extends HttpServlet{
 		
 		String[] urlSections = URI.split("/");
 		
-		if(urlSections.length==3) {
+		if(urlSections.length==4) {
 		
-		List<MonsterZ> list = MonstersService.fullDeck();
-		
-		String json = objectMapper.writeValueAsString(list);
-		System.out.println(json);
-		
-		PrintWriter printWriter = response.getWriter();
-			
-		printWriter.print(json);
-		
-		response.setStatus(200);
-		
-		response.setContentType("application/json");
-		
-		
-		
-		}else if(urlSections.length==4) {
-			
 			try {
-			
+				
 			int id = Integer.valueOf(urlSections[3]);
 			
 			//Monsters Monsters = MonstersService.getSingleMonsters(id);
@@ -171,8 +156,10 @@ public class MonstersController extends HttpServlet{
 			PrintWriter printWriter = response.getWriter();
 			
 			String json = objectMapper.writeValueAsString(Monsters);
-
-			printWriter.print(json);
+			
+			//printWriter.print(json);
+			
+			response.getWriter().write("You deleted monster id: "+id);
 			
 			response.setStatus(201);
 			
@@ -223,11 +210,21 @@ public class MonstersController extends HttpServlet{
 		Stream.Builder<String> toBuild = Stream.builder();
 		Stream<String> toPost = toBuild.add(json).build();
 		
-		System.out.println("Here is the information that was updated:");
+		System.out.println();
 		System.out.println("\n");
 		toPost.forEach(System.out::println);
 		
+		String json3 = mapper.serialize(Monsters);
+		MonsterZ unJSON = mapper.deSerialize(json3, MonsterZ.class);
+		response.getWriter().write("Here is the information that was updated: "+unJSON+" "+toPost);
+		
+		PrintWriter printWriter = response.getWriter();
+		
+		//printWriter.print(Monsters);
+		
 		response.setStatus(201);
+		
+		response.setContentType("application/json");
 		
 	}
 
