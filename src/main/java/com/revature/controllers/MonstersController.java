@@ -149,12 +149,14 @@ public class MonstersController extends HttpServlet{
 		System.out.println(json);
 		
 		PrintWriter printWriter = response.getWriter();
-		
+			
 		printWriter.print(json);
 		
 		response.setStatus(200);
 		
 		response.setContentType("application/json");
+		
+		
 		
 		}else if(urlSections.length==4) {
 			
@@ -169,7 +171,7 @@ public class MonstersController extends HttpServlet{
 			PrintWriter printWriter = response.getWriter();
 			
 			String json = objectMapper.writeValueAsString(Monsters);
-			
+
 			printWriter.print(json);
 			
 			response.setStatus(201);

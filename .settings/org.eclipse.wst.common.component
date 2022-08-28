@@ -19,7 +19,7 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="ORM2-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ORM2/ORM2">
+        <dependent-module archiveName="newORM-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/newORM/newORM">
             <dependency-type>uses</dependency-type>
         </dependent-module>
                                 
